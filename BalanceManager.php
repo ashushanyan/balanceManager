@@ -41,11 +41,20 @@ class BalanceManager implements BalanceManagerInterface {
     }
 }
 
+function simulateBalanceTransactions(User $user, BalanceManagerInterface $balanceManager, int $iterations) {
+    for ($i = 0; $i < $iterations; $i++) {
+        $randomAmount = number_format(rand(500, 1500) / 100, 8, '.', '');
+        if (rand(0, 1)) {
+            $balanceManager->addBalance($user, $randomAmount);
+            echo "Added balance: " . $randomAmount . " | New Balance: " . $balanceManager->getBalance($user) . "\n";
+        } else {
+            $balanceManager->deductBalance($user, $randomAmount);
+            echo "Deducted balance: " . $randomAmount . " | New Balance: " . $balanceManager->getBalance($user) . "\n";
+        }
+        usleep(10000);
+    }
+}
+
 $user = new User('1000.12345678');
-
 $balanceManager = new BalanceManager();
-$balanceManager->addBalance($user, '50.12345678');
-echo "Balance after crediting: " . $balanceManager->getBalance($user) . "\n";
-
-$balanceManager->deductBalance($user, '100.12345678');
-echo "Balance after deduction: " . $balanceManager->getBalance($user);
+simulateBalanceTransactions($user, $balanceManager, 100);
